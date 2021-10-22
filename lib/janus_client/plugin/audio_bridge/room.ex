@@ -39,8 +39,7 @@ defmodule JanusClient.Plugin.AudioBridge.Room do
   end
 
   @doc false
-  @spec from_server_response(JanusClient.Plugin.AudioBridge.t(), %{}) :: {:ok, Room.t()}
-  @spec from_server_response(JanusClient.Plugin.AudioBridge.t(), %{}) :: {:error, String.t()}
+  @spec from_server_response(JanusClient.Plugin.AudioBridge.t(), %{}) :: {:ok, Room.t()} | {:error, String.t()}
   def from_server_response(_, %{"data" => %{"error" => error}}), do: {:error, error}
   def from_server_response(plugin, %{"data" => %{"room" => room_id, "permanent" => permanent}}) do
     {:ok,

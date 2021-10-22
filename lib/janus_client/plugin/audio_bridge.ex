@@ -14,8 +14,10 @@ defmodule JanusClient.Plugin.AudioBridge do
 
   alias JanusClient.Plugin.AudioBridge.Room
 
-  @spec create_room(JanusClient.Plugin.AudioBridge.t()) :: {:ok, Room.t()}
-  @spec create_room(JanusClient.Plugin.AudioBridge.t()) :: {:error, String.t()}
+  @doc """
+  Create a new room for the given AudioBridge plugin
+  """
+  @spec create_room(JanusClient.Plugin.AudioBridge.t()) :: {:ok, Room.t()} | {:error, String.t()}
   def create_room(plugin, request_body \\ Room.creation_request_body()) do
     {:ok, response} = plugin.client.http_client
                       |> Tesla.post(plugin_url(plugin), room_creation_message(request_body))
@@ -44,7 +46,7 @@ defmodule JanusClient.Plugin.AudioBridge do
     end
 
     def from_server_response(plugin, client, response) do
-      %{plugin | client: client, handle_id: response["data"]["id"]}
+      {:ok, %{plugin | client: client, handle_id: response["id"]}}
     end
   end
 end
