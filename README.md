@@ -1,6 +1,6 @@
 # JanusClient
 
-**TODO: Add description**
+An Elixir library to interact with the Janus WebRTC Gateway server.
 
 ## Installation
 
