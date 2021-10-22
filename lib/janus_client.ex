@@ -29,7 +29,8 @@ defmodule JanusClient do
       {Tesla.Middleware.BaseUrl, base_url},
       Tesla.Middleware.JSON
     ]
-    Tesla.client(middleware)
+    adapter = {Tesla.Adapter.Hackney, [recv_timeout: 30_000]}
+    Tesla.client(middleware, adapter)
   end
 
   # Initiate the Janus session
