@@ -16,21 +16,29 @@ defmodule JanusClient.Plugin.AudioBridge.Room do
     permanent: nil
 
   @doc """
-  Returns a map for the create_room request to Janus
+  Returns a map for the create_room request to Janus. Takes a keyword list of options, with the following optional keys 
+  - room_id:     Integer, defaults to nil 
+  - permanent:   Boolean, defaults to false 
+  - description: String,  defaults to nil 
+  - secret:      Integer, defaults to nil 
+  - pin:         Integer, defaults to nil 
+  - record:      Boolean, defaults to false 
+  - record_file: String,  defaults to nil 
+  - record_dir:  String,  defaults to nil
   """
-  def creation_request_body(room_id \\ nil, permanent \\ false, description \\ nil, secret \\ nil, pin \\ nil,
-    record \\ false, record_file \\ nil, record_dir \\ nil) do
+  @spec creation_request_body([]) :: map()
+  def creation_request_body(opts \\ []) do
     request = %{
       request: "create",
       is_private: true,
-      room: room_id,
-      permanent: permanent,
-      description: description,
-      secret: secret,
-      pin: pin,
-      record: record,
-      record_file: record_file,
-      record_dir: record_dir
+      room: opts[:room_id],
+      permanent: opts[:permanent],
+      description: opts[:description],
+      secret: opts[:secret],
+      pin: opts[:pin],
+      record: opts[:record],
+      record_file: opts[:record_file],
+      record_dir: opts[:record_dir]
     }
 
     request
