@@ -30,6 +30,7 @@ defmodule JanusClient.Plugin.AudioBridge.Room do
   def creation_request_body(opts \\ []) do
     request = %{
       request: "create",
+      admin_key: opts[:admin_key],
       is_private: true,
       room: opts[:room_id],
       permanent: opts[:permanent],

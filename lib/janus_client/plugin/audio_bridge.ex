@@ -4,13 +4,12 @@ defmodule JanusClient.Plugin.AudioBridge do
   """
 
   @type t :: %JanusClient.Plugin.AudioBridge{
-    client: JanusClient.t(),
-    handle_id: integer()
+    client: JanusClient.t() | nil,
+    handle_id: integer() | nil
   }
 
   defstruct client: nil,
-    handle_id: nil,
-    transaction: nil
+    handle_id: nil
 
   alias JanusClient.Plugin.AudioBridge.Room
 

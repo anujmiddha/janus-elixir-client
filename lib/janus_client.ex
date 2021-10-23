@@ -12,6 +12,7 @@ defmodule JanusClient do
 
   alias JanusClient.Core.Session
   alias JanusClient.Plugin
+  alias JanusClient.Plugin.AudioBridge
 
   @doc """
   Initialize the client for Janus server with the given url
@@ -19,7 +20,6 @@ defmodule JanusClient do
   @spec initialize(String.t()) :: JanusClient.t()
   def initialize(server_url) do
     %JanusClient{http_client: init_http_client(server_url)}
-    |> init_session()
   end
   
   #Initiate a Tesla HTTP Client with the given base url
@@ -33,9 +33,12 @@ defmodule JanusClient do
     Tesla.client(middleware, adapter)
   end
 
+  @doc """
+  Instantiates a Janus session
+  """
   # Initiate the Janus session
   @spec init_session(JanusClient.t()) :: JanusClient.t()
-  defp init_session(janus_client) do
+  def init_session(janus_client) do
     {:ok, response} = janus_client.http_client
                       |> Tesla.post("/janus", %{janus: "create", transaction: new_transaction_id()})
     case response.status do
