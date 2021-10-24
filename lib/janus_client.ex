@@ -12,7 +12,6 @@ defmodule JanusClient do
 
   alias JanusClient.Core.Session
   alias JanusClient.Plugin
-  alias JanusClient.Plugin.AudioBridge
 
   @doc """
   Initialize the client for Janus server with the given url
@@ -21,7 +20,7 @@ defmodule JanusClient do
   def initialize(server_url) do
     %JanusClient{http_client: init_http_client(server_url)}
   end
-  
+
   #Initiate a Tesla HTTP Client with the given base url
   @spec init_http_client(String.t()) :: Tesla.Client.t()
   defp init_http_client(base_url) do
@@ -50,7 +49,7 @@ defmodule JanusClient do
   @doc """
   Attach a plugin for the given JanusClient session
   """
-  @spec attach_plugin(JanusClient.t(), plugin) :: {:ok, plugin} | {:error, String.t()} when plugin: JanusClient.Plugin
+  @spec attach_plugin(JanusClient.t(), plugin) :: {:ok, plugin} | {:error, String.t()} when plugin: JanusClient.Plugin.t()
   def attach_plugin(janus_client, plugin) do
     {:ok, response} = janus_client.http_client
                       |> Tesla.post(session_url(janus_client),

@@ -24,3 +24,7 @@ janus_client-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+*.swp
+*.swo
+
