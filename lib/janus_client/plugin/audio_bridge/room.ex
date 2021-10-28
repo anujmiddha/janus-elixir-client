@@ -17,7 +17,7 @@ defmodule JanusClient.Plugin.AudioBridge.Room do
     optional(:permanent) => boolean(),
     optional(:description) => String.t(),
     optional(:secret) => integer(),
-    optional(:pin) => integer(),
+    optional(:pin) => String.t(),
     optional(:is_private) => boolean(),
     optional(:allowed) => [String.t()],
     optional(:sampling_rate) => integer(),
