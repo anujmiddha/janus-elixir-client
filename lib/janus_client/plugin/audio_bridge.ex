@@ -16,8 +16,8 @@ defmodule JanusClient.Plugin.AudioBridge do
   @doc """
   Create a new room for the given AudioBridge plugin
   """
-  @spec create_room(JanusClient.Plugin.AudioBridge.t()) :: {:ok, Room.t()} | {:error, String.t()}
-  def create_room(plugin, request_body \\ Room.creation_request_body()) do
+  @spec create_room(JanusClient.Plugin.AudioBridge.t(), Room.request_create()) :: {:ok, Room.t()} | {:error, String.t()}
+  def create_room(plugin, request_body) do
     {:ok, response} = plugin.client.http_client
                       |> Tesla.post(plugin_url(plugin), room_creation_message(request_body))
 

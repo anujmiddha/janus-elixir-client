@@ -11,44 +11,32 @@ defmodule JanusClient.Plugin.AudioBridge.Room do
     permanent: boolean()
   }
 
+  @type request_create :: %{
+    optional(:room_id) => integer(),
+    optional(:admin_key) => String.t(),
+    optional(:permanent) => boolean(),
+    optional(:description) => String.t(),
+    optional(:secret) => integer(),
+    optional(:pin) => integer(),
+    optional(:is_private) => boolean(),
+    optional(:allowed) => [String.t()],
+    optional(:sampling_rate) => integer(),
+    optional(:spatial_audio) => boolean(),
+    optional(:audiolevel_ext) => boolean(),
+    optional(:audiolevel_event) => boolean(),
+    optional(:audio_active_packets) => integer(),
+    optional(:audio_level_average) => integer(),
+    optional(:default_prebuffering) => integer(),
+    optional(:record) => boolean(),
+    optional(:record_file) => String.t(),
+    optional(:record_dir) => String.t(),
+    optional(:allow_rtp_participants) => boolean(),
+    optional(:groups) => [String.t()] 
+  }
+
   defstruct plugin: nil,
     room_id: nil,
     permanent: nil
-
-  @doc """
-  Returns a map for the create_room request to Janus. Takes a keyword list of options, with the following optional keys 
-  - room_id:          Integer, defaults to nil
-  - admin_key:        String,  defaults to nil
-  - permanent:        Boolean, defaults to false
-  - description:      String,  defaults to nil
-  - secret:           Integer, defaults to nil
-  - pin:              Integer, defaults to nil
-  - record:           Boolean, defaults to false
-  - record_file:      String,  defaults to nil
-  - record_dir:       String,  defaults to nil
-  - audiolevel_event: Boolean, defaults to nil
-  """
-  @spec creation_request_body([]) :: map()
-  def creation_request_body(opts \\ []) do
-    request = %{
-      request: "create",
-      admin_key: opts[:admin_key],
-      is_private: true,
-      room: opts[:room_id],
-      permanent: opts[:permanent],
-      description: opts[:description],
-      secret: opts[:secret],
-      pin: opts[:pin],
-      record: opts[:record],
-      record_file: opts[:record_file],
-      record_dir: opts[:record_dir],
-      audiolevel_event: opts[:audiolevel_event]
-    }
-
-    request
-    |> Enum.filter(fn {_, v} -> v != nil end)
-    |> Enum.into(%{})
-  end
 
   @doc false
   @spec from_server_response(JanusClient.Plugin.AudioBridge.t(), %{}) :: {:ok, Room.t()} | {:error, String.t()}
