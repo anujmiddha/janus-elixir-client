@@ -35,7 +35,7 @@ defmodule JanusClient.Plugin.AudioBridge do
     %{
       janus: "message",
       transaction: JanusClient.new_transaction_id(),
-      body: request_body
+      body: Map.put(request_body, :request, "create")
     }
   end
 
