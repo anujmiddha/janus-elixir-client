@@ -1,4 +1,6 @@
 defmodule JanusClient do
+  require Logger
+
   @moduledoc """
   Handle interaction with the Janus server.
   """
@@ -8,7 +10,7 @@ defmodule JanusClient do
     session: JanusClient.Core.Session | nil,
   }
 
-  defstruct http_client: nil, session: nil
+  defstruct [:http_client, session: nil]
 
   alias JanusClient.Core.Session
   alias JanusClient.Plugin
@@ -35,7 +37,6 @@ defmodule JanusClient do
   @doc """
   Instantiates a Janus session
   """
-  # Initiate the Janus session
   @spec init_session(JanusClient.t()) :: JanusClient.t()
   def init_session(janus_client) do
     {:ok, response} = janus_client.http_client
@@ -43,6 +44,24 @@ defmodule JanusClient do
     case response.status do
       200 -> %{janus_client | session: session_from_response(response.body)}
       _-> janus_client
+    end
+  end
+
+  @doc """
+  If the current session is expired, create a new session. Else, return the existing session
+  """
+  @spec refresh_session(JanusClient.t()) :: JanusClient.t()
+  def refresh_session(janus_client) do
+    {:ok, response} = janus_client.http_client
+                      |> Tesla.post("/janus/#{janus_client.session.session_id}", %{janus: "keepalive", transaction: janus_client.session.transaction})
+
+    cond do
+      response.status == 200 && valid_session(response.body) ->
+        Logger.info("Existing session is valid")
+        janus_client
+      true ->
+        Logger.info("Existing session is expired. Creating a new session")
+        init_session(janus_client)
     end
   end
 
@@ -80,5 +99,9 @@ defmodule JanusClient do
   defp session_from_response(response) do
     %Session{session_id: response["data"]["id"], transaction: response["transaction"]}
   end
+
+  @spec valid_session(map()) :: boolean
+  defp valid_session(%{"janus" => "ack"}), do: true
+  defp valid_session(_), do: false
 end
 
