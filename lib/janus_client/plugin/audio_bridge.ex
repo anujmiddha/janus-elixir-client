@@ -4,14 +4,25 @@ defmodule JanusClient.Plugin.AudioBridge do
   """
 
   @type t :: %JanusClient.Plugin.AudioBridge{
+    server_url: String.t() | nil,
     client: JanusClient.t() | nil,
     handle_id: integer() | nil
   }
 
-  defstruct client: nil,
+  defstruct server_url: nil,
+    client: nil,
     handle_id: nil
 
+  alias JanusClient.Plugin.AudioBridge
   alias JanusClient.Plugin.AudioBridge.Room
+
+  def init(server_url) do
+    client =
+      JanusClient.initialize(server_url)
+      |> JanusClient.init_session()
+
+    JanusClient.attach_plugin(client, %AudioBridge{})
+  end
 
   @doc """
   Create a new room for the given AudioBridge plugin
@@ -59,6 +70,23 @@ defmodule JanusClient.Plugin.AudioBridge do
     end
   end
 
+  @spec message_room(AudioBridge.t(), integer(), String.t(), [{atom(), term()}]) :: {:ok, %{}} | {:error, String.t()}
+  def message_room(plugin, room_id, request, opts) do
+    message_body = Map.merge(
+      %{request: request, room: room_id},
+      Enum.into(opts, %{})
+    )
+
+    {:ok, response} = plugin.client.http_client
+                      |> Tesla.post(plugin_url(plugin), plugin_message(message_body))
+
+    case response.body do
+      %{"janus" => "success", "plugindata" => %{"data" => %{"error" => error}}} -> {:error, error}
+      %{"janus" => "success", "plugindata" => %{"data" => data}} -> {:ok, data}
+      %{"janus" => "error", "error" => %{"code" => code, "reason" => reason}} -> {:error, "[#{code}] #{reason}"}
+    end
+  end
+
   defp plugin_url(plugin) do
     "/janus/#{plugin.client.session.session_id}/#{plugin.handle_id}"
   end
@@ -81,4 +109,3 @@ defmodule JanusClient.Plugin.AudioBridge do
     end
   end
 end
-

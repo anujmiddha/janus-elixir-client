@@ -42,8 +42,12 @@ defmodule JanusClient do
     {:ok, response} = janus_client.http_client
                       |> Tesla.post("/janus", %{janus: "create", transaction: new_transaction_id()})
     case response.status do
-      200 -> %{janus_client | session: session_from_response(response.body)}
-      _-> janus_client
+      200 ->
+        Logger.info("Session initiated: #{inspect response.body}")
+        %{janus_client | session: session_from_response(response.body)}
+      _->
+        Logger.warn("Could not initiate session: #{inspect response.body}")
+        janus_client
     end
   end
 
@@ -104,4 +108,3 @@ defmodule JanusClient do
   defp valid_session(%{"janus" => "ack"}), do: true
   defp valid_session(_), do: false
 end
-
